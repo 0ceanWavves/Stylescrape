@@ -1,0 +1,21 @@
+{
+  "name": "website-ripping-tools",
+  "version": "1.0.0",
+  "description": "Tools for cloning and analyzing websites",
+  "main": "website-cloner.js",
+  "scripts": {
+    "clone": "node website-cloner.js",
+    "extract": "node extract-design.js",
+    "serve": "node serve-site.js",
+    "static": "node static-generator.js",
+    "start": "node website-cloner.js"
+  },
+  "dependencies": {
+    "jsdom": "^20.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "",
+  "license": "MIT"
+}
