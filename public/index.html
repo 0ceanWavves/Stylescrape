@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Cloner API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0066cc;
+        }
+        h2 {
+            margin-top: 20px;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #0066cc;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background-color: #0052a3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Website Cloner API Server</h1>
+        <p>This is the API server for the Website Cloner tool. Access the GUI at <a href="http://localhost:3000">http://localhost:3000</a> to use the tool.</p>
+        
+        <h2>Available API Endpoints</h2>
+        <table>
+            <tr>
+                <th>Endpoint</th>
+                <th>Method</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td><code>/api/clone</code></td>
+                <td>POST</td>
+                <td>Clone a website</td>
+            </tr>
+            <tr>
+                <td><code>/api/sites</code></td>
+                <td>GET</td>
+                <td>List cloned sites</td>
+            </tr>
+            <tr>
+                <td><code>/api/extract-design</code></td>
+                <td>POST</td>
+                <td>Extract design elements from a cloned site</td>
+            </tr>
+            <tr>
+                <td><code>/sites/...</code></td>
+                <td>GET</td>
+                <td>Access static files from cloned sites</td>
+            </tr>
+        </table>
+        
+        <h2>Quick Usage</h2>
+        <p>To use the Website Cloner tool:</p>
+        <ol>
+            <li>Start the backend server (this server)</li>
+            <li>Start the frontend GUI (from the <code>website-cloner-gui</code> directory)</li>
+            <li>Open your browser to <a href="http://localhost:3000">http://localhost:3000</a></li>
+            <li>Enter a website URL and options</li>
+            <li>Click "Clone Website"</li>
+        </ol>
+        
+        <a href="http://localhost:3000" class="button">Open GUI Interface</a>
+    </div>
+</body>
+</html> 

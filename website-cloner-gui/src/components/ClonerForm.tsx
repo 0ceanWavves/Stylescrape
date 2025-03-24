@@ -21,11 +21,27 @@ function ClonerForm({
     const [cloneAssets, setCloneAssets] = useState(true);
     const [extractLibraries, setExtractLibraries] = useState(false);
     const [outputPath, setOutputPath] = useState('./cloned-site');
+    const [urlError, setUrlError] = useState('');
+
+    const validateUrl = (inputUrl: string) => {
+        setUrl(inputUrl);
+        
+        // Clear error when user is typing
+        if (urlError) setUrlError('');
+        
+        // Don't validate empty input (to avoid showing error on initial render)
+        if (!inputUrl.trim()) return;
+        
+        // Basic URL validation
+        if (!inputUrl.includes('.')) {
+            setUrlError('Please enter a valid domain (e.g., example.com)');
+        }
+    };
 
     const handleSubmit = () => {
         // Basic validation
         if (!url.trim()) {
-            alert('Please enter a valid URL');
+            setUrlError('Please enter a URL');
             return;
         }
 
@@ -47,10 +63,12 @@ function ClonerForm({
                 fullWidth
                 placeholder="Enter website URL (e.g., example.com)"
                 value={url}
-                onChange={(e) => setUrl(e.target.value)}
+                onChange={(e) => validateUrl(e.target.value)}
                 className={styles.inputField}
                 disabled={disabled}
                 required
+                error={!!urlError}
+                helperText={urlError}
             />
             <TextField
                 label="Output Path"
@@ -90,7 +108,7 @@ function ClonerForm({
                 color="primary" 
                 onClick={handleSubmit} 
                 className={styles.button}
-                disabled={disabled || !url.trim()}
+                disabled={disabled || !url.trim() || !!urlError}
             >
                 {disabled ? 'Cloning in progress...' : 'Clone Website'}
             </Button>

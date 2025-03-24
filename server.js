@@ -147,6 +147,37 @@ app.post('/api/extract-design', (req, res) => {
     res.json({ message: 'Design extraction endpoint (not implemented yet)' });
 });
 
+// Serve static files from the cloned-site directory
+app.use('/sites', express.static('cloned-site'));
+
+// Serve static files from the public directory
+app.use(express.static('public'));
+
+// Root path handler (fallback to API info if HTML isn't available)
+app.get('/', (req, res, next) => {
+    // If the accept header prefers JSON or if public/index.html doesn't exist,
+    // send the JSON response
+    if (req.accepts('html')) {
+        next(); // Will go to the next middleware (static files)
+    } else {
+        res.json({ 
+            message: 'Website Cloner API Server',
+            endpoints: {
+                clone: 'POST /api/clone',
+                sites: 'GET /api/sites',
+                extractDesign: 'POST /api/extract-design',
+                static: 'GET /sites/{file}'
+            },
+            status: 'running'
+        });
+    }
+});
+
+// Handle 404 errors - must be the last route
+app.use((req, res) => {
+    res.status(404).json({ error: 'Not Found', message: `Route ${req.originalUrl} not found` });
+});
+
 console.log(`Attempting to start server on port ${PORT}`);
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
