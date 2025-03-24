@@ -23,7 +23,7 @@ function App() {
     margin: '0 auto'
   };
 
-  const handleClone = async (url: string, options: { cloneAssets: boolean; extractLibraries: boolean; }) => {
+  const handleClone = async (url: string, options: { cloneAssets: boolean; extractLibraries: boolean; outputPath: string; }) => {
     setCloning(true);
     setProgress([]);
     setLibraries([]);
@@ -68,7 +68,7 @@ function App() {
       }
 
       // Set success message
-      setSuccess('Website cloned successfully!');
+      setSuccess(`Website cloned successfully! Saved to: ${options.outputPath}`);
       
     } catch (err: any) {
       console.error('Cloning error:', err);

@@ -17,14 +17,72 @@ const url = require('url');
  * - Updates links to point to local resources
  */
 
+// Parse command-line arguments
+function parseArgs() {
+  const args = process.argv.slice(2);
+  const options = {
+    url: '',
+    output: path.join(__dirname, 'cloned-site'),
+    depth: 2,
+    assets: true,
+    extract: false
+  };
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    
+    if (arg.startsWith('--url=')) {
+      options.url = arg.substring(6);
+    } else if (arg.startsWith('--output=')) {
+      options.output = arg.substring(9);
+    } else if (arg.startsWith('--depth=')) {
+      options.depth = parseInt(arg.substring(8), 10);
+    } else if (arg === '--assets') {
+      options.assets = true;
+    } else if (arg === '--no-assets') {
+      options.assets = false;
+    } else if (arg === '--extract') {
+      options.extract = true;
+    } else if (arg === '--help') {
+      console.log(`
+Website Cloner Tool - Usage:
+---------------------------
+node website-cloner.js --url=https://example.com [options]
+
+Options:
+  --url=URL             The website URL to clone (required)
+  --output=PATH         Where to save the cloned website (default: ./cloned-site)
+  --depth=NUMBER        How many levels of links to follow (default: 2)
+  --assets              Download images, CSS, JavaScript files (default)
+  --no-assets           Don't download assets
+  --extract             Extract and analyze design elements
+  --help                Show this help message
+      `);
+      process.exit(0);
+    }
+  }
+
+  if (!options.url) {
+    console.error('Error: URL is required. Use --url=https://example.com');
+    console.log('Use --help for usage information');
+    process.exit(1);
+  }
+
+  return options;
+}
+
+// Parse command-line arguments and set config
+const args = parseArgs();
+
 // Configuration - Edit these values
 const config = {
-  targetWebsite: 'https://joincobalt.com',     // The website URL to clone
-  outputDir: path.join(__dirname, 'cloned-site'), // Where to save the cloned website
-  maxDepth: 2,                                  // How many levels of links to follow
-  downloadAssets: true,                         // Download images, CSS, JavaScript files
-  respectRobotsTxt: true,                       // Whether to check and respect robots.txt
-  delayBetweenRequests: 500,                    // Delay between requests in ms to be polite
+  targetWebsite: args.url,                    // The website URL to clone
+  outputDir: args.output,                     // Where to save the cloned website
+  maxDepth: args.depth,                       // How many levels of links to follow
+  downloadAssets: args.assets,                // Download images, CSS, JavaScript files
+  extractDesign: args.extract,                // Extract design elements
+  respectRobotsTxt: true,                     // Whether to check and respect robots.txt
+  delayBetweenRequests: 500,                  // Delay between requests in ms to be polite
   userAgent: 'Mozilla/5.0 Website Analysis Tool' // User agent string to use
 };
 
@@ -644,6 +702,129 @@ This tool is provided for educational purposes only. When using this tool:
 
 // Start the cloning process
 console.log(`Starting to clone ${config.targetWebsite} to ${config.outputDir}`);
-console.log(`Max depth: ${config.maxDepth}, Download assets: ${config.downloadAssets}`);
+console.log(`Max depth: ${config.maxDepth}, Download assets: ${config.downloadAssets}, Extract design: ${config.extractDesign}`);
 cloneUrl(config.targetWebsite)
+  .then(() => {
+    console.log("\n=== Website Cloning Summary ===");
+    console.log(`Target Website: ${config.targetWebsite}`);
+    console.log(`Pages Downloaded: ${visitedUrls.size}`);
+    console.log(`Pages Failed: ${failedUrls.size}`);
+    console.log(`Output Directory: ${config.outputDir}`);
+    console.log("\nCloning process complete!");
+
+    // Generate design analysis if extractDesign is enabled
+    if (config.extractDesign) {
+      console.log("\nGenerating design analysis...");
+      
+      try {
+        // If the extract-design.js file exists, run the design extraction
+        const extractDesignPath = path.join(__dirname, 'extract-design.js');
+        if (fs.existsSync(extractDesignPath)) {
+          console.log("Generating design analysis report...");
+          
+          // Create design-elements directory if it doesn't exist
+          const designDir = path.join(__dirname, 'design-elements');
+          if (!fs.existsSync(designDir)) {
+            fs.mkdirSync(designDir, { recursive: true });
+          }
+          
+          // Create CSS directory in design-elements if it doesn't exist
+          const cssDir = path.join(designDir, 'css');
+          if (!fs.existsSync(cssDir)) {
+            fs.mkdirSync(cssDir, { recursive: true });
+          }
+          
+          // Extract all CSS from the cloned site
+          const allCss = extractAllCss(config.outputDir);
+          fs.writeFileSync(path.join(cssDir, 'all-styles.css'), allCss);
+          console.log(`Extracted CSS to ${path.join(cssDir, 'all-styles.css')}`);
+          
+          // Create a simple design report
+          const reportPath = path.join(designDir, 'design-report.html');
+          const reportContent = generateDesignReport(config.targetWebsite, config.outputDir);
+          fs.writeFileSync(reportPath, reportContent);
+          console.log(`Created design report: ${reportPath}`);
+        } else {
+          console.log("Design analysis skipped: extract-design.js not found");
+        }
+      } catch (error) {
+        console.error("Error generating design analysis:", error);
+      }
+    }
+    
+    console.log("\nNext Steps:");
+    console.log(`1. Open the cloned site: ${path.join(config.outputDir, 'index.html')}`);
+    if (config.extractDesign) {
+      console.log(`2. View the design report: ${path.join(__dirname, 'design-elements', 'design-report.html')}`);
+    }
+  })
   .catch(error => console.error('Error during cloning:', error));
+
+// Helper function to extract all CSS from the cloned site
+function extractAllCss(siteDir) {
+  let allCss = '';
+  try {
+    // Walk through the directory recursively
+    function walkDir(dir) {
+      const files = fs.readdirSync(dir);
+      for (const file of files) {
+        const filePath = path.join(dir, file);
+        const stat = fs.statSync(filePath);
+        if (stat.isDirectory()) {
+          walkDir(filePath);
+        } else if (file.endsWith('.css')) {
+          // Read and append CSS file content
+          const css = fs.readFileSync(filePath, 'utf8');
+          allCss += `/* Source: ${filePath.replace(siteDir, '')} */\n${css}\n\n`;
+        }
+      }
+    }
+    
+    walkDir(siteDir);
+  } catch (error) {
+    console.error("Error extracting CSS:", error);
+  }
+  return allCss;
+}
+
+// Helper function to generate a simple design report
+function generateDesignReport(targetWebsite, siteDir) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Report for ${targetWebsite}</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; }
+    h1, h2, h3 { color: #333; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section { margin-bottom: 30px; }
+    code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Design Report for ${targetWebsite}</h1>
+    <div class="section">
+      <h2>Overview</h2>
+      <p>This report provides a basic analysis of the design elements from the cloned website.</p>
+      <p>Cloned site location: <code>${siteDir}</code></p>
+    </div>
+    <div class="section">
+      <h2>Design Assets</h2>
+      <p>All CSS styles have been extracted to: <code>${path.join(__dirname, 'design-elements', 'css', 'all-styles.css')}</code></p>
+    </div>
+    <div class="section">
+      <h2>Next Steps</h2>
+      <p>For a more detailed analysis:</p>
+      <ol>
+        <li>Browse the cloned site at <code>${path.join(siteDir, 'index.html')}</code></li>
+        <li>Examine the CSS files for design patterns</li>
+        <li>Use browser developer tools to inspect elements</li>
+      </ol>
+    </div>
+  </div>
+</body>
+</html>`;
+}

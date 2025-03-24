@@ -38,14 +38,14 @@ function extractLibraries(output) {
 
 // API endpoint for cloning
 app.post('/api/clone', (req, res) => {
-    const { url, cloneAssets, extractLibraries } = req.body;
+    const { url, cloneAssets, extractLibraries, outputPath } = req.body;
     
     if (!url) {
         return res.status(400).json({ error: 'URL is required' });
     }
 
     console.log(`Starting to clone: ${url}`);
-    console.log(`Options: cloneAssets=${cloneAssets}, extractLibraries=${extractLibraries}`);
+    console.log(`Options: cloneAssets=${cloneAssets}, extractLibraries=${extractLibraries}, outputPath=${outputPath || './cloned-site'}`);
 
     // Construct the command to execute the website-cloner script
     let args = ['website-cloner.js', `--url=${url}`];
@@ -56,6 +56,10 @@ app.post('/api/clone', (req, res) => {
     
     if (extractLibraries) {
         args.push('--extract');
+    }
+
+    if (outputPath) {
+        args.push(`--output=${outputPath}`);
     }
 
     // Use spawn instead of exec to get real-time output

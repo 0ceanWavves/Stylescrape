@@ -14,12 +14,13 @@ function ClonerForm({
     onClone, 
     disabled = false 
 }: { 
-    onClone: (url: string, options: { cloneAssets: boolean; extractLibraries: boolean; }) => void; 
+    onClone: (url: string, options: { cloneAssets: boolean; extractLibraries: boolean; outputPath: string; }) => void; 
     disabled?: boolean;
 }) {
     const [url, setUrl] = useState('');
     const [cloneAssets, setCloneAssets] = useState(true);
     const [extractLibraries, setExtractLibraries] = useState(false);
+    const [outputPath, setOutputPath] = useState('./cloned-site');
 
     const handleSubmit = () => {
         // Basic validation
@@ -34,7 +35,7 @@ function ClonerForm({
             processedUrl = 'https://' + url;
         }
 
-        onClone(processedUrl, { cloneAssets, extractLibraries });
+        onClone(processedUrl, { cloneAssets, extractLibraries, outputPath });
     };
 
     return (
@@ -50,6 +51,17 @@ function ClonerForm({
                 className={styles.inputField}
                 disabled={disabled}
                 required
+            />
+            <TextField
+                label="Output Path"
+                variant="outlined"
+                fullWidth
+                placeholder="Enter output folder path (e.g., ./cloned-site)"
+                value={outputPath}
+                onChange={(e) => setOutputPath(e.target.value)}
+                className={styles.inputField}
+                disabled={disabled}
+                helperText="Where to save the cloned website files"
             />
             <FormControlLabel
                 control={
