@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, ListItem, ListItemText, Typography, Box, Paper, Chip, Divider } from '@mui/material';
+import { Typography, Box, Paper, Chip, Divider } from '@mui/material';
 import styles from './LibraryList.module.css';
 
 /**

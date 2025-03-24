@@ -1,7 +1,6 @@
 import React from 'react';
 import { LinearProgress, Typography, Box, Paper, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CircleIcon from '@mui/icons-material/Circle';
 import styles from './CloneProgress.module.css';
 

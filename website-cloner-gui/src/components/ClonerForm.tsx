@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Checkbox, FormControlLabel, Box, Typography, Paper } from '@mui/material';
+import { TextField, Button, Checkbox, FormControlLabel, Typography, Paper } from '@mui/material';
 import styles from './ClonerForm.module.css';
 
 /**
