@@ -1,0 +1,12 @@
+[build]
+  base = "website-cloner-gui/"
+  publish = "build/"
+  command = "npm install && npm run build"
+
+[build.environment]
+  NODE_VERSION = "16"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200 
