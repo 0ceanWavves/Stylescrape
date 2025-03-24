@@ -31,12 +31,15 @@ function App() {
     setSuccess(null);
 
     try {
-      // Ensure we're connecting to the correct port (3002)
-      const response = await fetch('http://localhost:3002/api/clone', {
+      // Ensure we're connecting to the correct port (port can be 3001 or 3002)
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3002';
+      const response = await fetch(`${apiUrl}/api/clone`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
+        credentials: 'omit', // Don't send cookies
         body: JSON.stringify({ url, ...options }),
       });
 

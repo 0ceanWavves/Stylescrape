@@ -5,7 +5,22 @@ const { spawn } = require('child_process');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors()); // Enable CORS for all origins (for development)
+// Enable CORS for all origins (for development)
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Add proper Content-Security-Policy headers
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; connect-src 'self' localhost:*; font-src 'self' data:;"
+  );
+  next();
+});
+
 app.use(express.json()); // Parse JSON request bodies
 
 // Helper function to extract libraries from output
@@ -35,6 +50,11 @@ function extractLibraries(output) {
     
     return libraries;
 }
+
+// Serve favicon.ico
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end(); // No content response for favicon requests
+});
 
 // API endpoint for cloning
 app.post('/api/clone', (req, res) => {
