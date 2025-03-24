@@ -1,0 +1,13 @@
+.container {
+    font-family: 'Roboto', sans-serif;
+    padding: 20px;
+}
+
+.error {
+    color: red;
+    padding: 1rem;
+    border: 1px solid red;
+    margin-top: 1rem;
+    max-width: 600px;
+    margin: 1rem auto;
+} 

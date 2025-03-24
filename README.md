@@ -1,152 +1,97 @@
-# Website Ripping Tools
+# StyleScrape: Website Scraping Toolkit
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+A comprehensive toolkit for scraping, analyzing, and working with websites locally. This tool can download websites, analyze their design elements, and serve them locally for further inspection.
 
-A collection of tools for cloning and analyzing websites. These tools allow you to:
+## Components
 
-1. Clone websites for offline viewing and analysis
-2. Extract design elements and create a design system report
-3. Generate static versions of dynamic websites
-4. Serve cloned websites locally for proper rendering
+This toolkit consists of several tools:
 
-## 📋 Table of Contents
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Website Cloner](#website-cloner)
-  - [Serving Cloned Sites](#serving-cloned-sites)
-  - [Static Site Generator](#static-site-generator)
-  - [Design Extractor](#design-extractor)
-- [Features](#features)
-- [Limitations](#limitations)
-- [Ethical Usage](#ethical-usage)
-- [License](#license)
+1. **Website Cloner** (`website-cloner.js`): Downloads a website for local analysis
+2. **Design Extractor** (`extract-design.js`): Analyzes design elements from cloned websites
+3. **Site Server** (`serve-site.js`): Serves cloned websites locally
+4. **Static Generator** (`static-generator.js`): Generates static files from cloned sites
+5. **Website Cloner GUI** (`website-cloner-gui/`): A modern graphical interface for the cloning tool
 
-## 🚀 Installation
+## Getting Started
 
-1. Ensure you have [Node.js](https://nodejs.org/) installed (v14 or higher)
-2. Clone this repository:
+### Prerequisites
+
+- Node.js (v14 or later recommended)
+- npm (v6 or later recommended)
+
+### Installation
+
+1. Clone this repository:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/website-ripping-tools.git
-   cd website-ripping-tools
+   git clone https://github.com/YOUR_USERNAME/stylescrape.git
+   cd stylescrape
    ```
-3. Install dependencies:
+
+2. Install dependencies:
    ```bash
    npm install
+   cd website-cloner-gui
+   npm install
+   cd ..
    ```
 
-## 🔧 Usage
+### Quick Start
 
-### Website Cloner
+The easiest way to start is using the provided scripts:
 
-Clone any website for offline viewing and analysis:
-
-```bash
-npm run clone -- --url https://example.com
+#### Windows
+```
+run-scraper.bat
 ```
 
-With advanced options:
-
+#### Mac/Linux
 ```bash
-npm run clone -- --url https://example.com --depth 3 --output example-site
+chmod +x run-scraper.sh
+./run-scraper.sh
 ```
 
-#### Command Line Options
+## Using the GUI
 
-- `--url [url]`: URL of the website to clone (default: joincobalt.com)
-- `--output [dir]`: Output directory name (default: website hostname)
-- `--depth [number]`: Maximum depth to crawl (default: 2)
-- `--no-assets`: Skip downloading assets (CSS, JS, images)
-- `--help`: Show help message
+1. Start the GUI application:
+   ```bash
+   # Windows
+   start-gui.bat
+   
+   # Mac/Linux
+   ./start-gui.sh
+   ```
 
-### Serving Cloned Sites
+2. Open your browser and navigate to:
+   ```
+   http://localhost:3000
+   ```
 
-For proper viewing of cloned websites (especially JavaScript-heavy sites like Next.js):
+3. Enter a website URL, select options, and click "Clone Website"
 
-```bash
-npm run serve
-```
+## File Types Downloaded
 
-This will start a local web server serving the default cloned site at http://localhost:3000.
+The tool downloads the following file types:
 
-To specify a different cloned site:
+- HTML files for web pages
+- CSS stylesheets
+- JavaScript files
+- Images (PNG, JPG, GIF, SVG, etc.)
+- Fonts (WOFF, WOFF2, TTF, EOT)
+- JSON data files
+- XML files
 
-```bash
-npm run serve -- --site example.com
-```
+## Deployment on Netlify
 
-### Static Site Generator
+To deploy this tool on Netlify:
 
-Convert a cloned dynamic website into a simplified static version that can be viewed directly in browsers:
+1. Push your repository to GitHub
+2. Log in to Netlify and create a new site from Git
+3. Select your repository
+4. Configure build settings:
+   - Build command: `cd website-cloner-gui && npm install && npm run build`
+   - Publish directory: `website-cloner-gui/build`
+5. Click "Deploy site"
 
-```bash
-npm run static -- --site joincobalt.com
-```
+## License
 
-This creates a static version in the `static-sites/[site-name]` directory that can be opened directly in any browser.
-
-### Design Extractor
-
-Extract design elements from a cloned website to create a comprehensive design system report:
-
-```bash
-npm run extract
-```
-
-The design report includes:
-- Color palettes
-- Typography analysis
-- UI components catalog
-- Design patterns
-
-## 📂 Folder Structure
-
-- `cloned-sites/` - Where cloned websites are stored
-- `static-sites/` - Where simplified static versions are generated
-- `design-reports/` - Where design analysis reports are saved
-
-## ✨ Features
-
-### Website Cloner
-- Downloads HTML pages with intelligent crawling
-- Follows links to capture site structure
-- Downloads and processes assets (CSS, JS, images)
-- Handles redirects and relative links
-
-### Local Server
-- Properly serves cloned websites
-- Supports dynamic JavaScript-heavy sites
-- Handles path resolution
-
-### Static Generator
-- Converts dynamic sites to static HTML
-- Simplifies complex structures
-- Preserves visual design elements
-- Makes sites viewable without a server
-
-### Design Extractor
-- Extracts color palettes
-- Identifies typography styles
-- Catalogs UI components
-- Creates visual design system report
-
-## ⚠️ Limitations
-
-- JavaScript-heavy sites might have limited functionality in static versions
-- Sites with authentication will only show public pages
-- Very complex sites might not clone completely
-- Web application functionality (forms, APIs) won't work
-
-## 🔒 Ethical Usage
-
-These tools are intended for:
-- Web design research
-- Learning web development techniques
-- Design inspiration
-- Accessibility studies
-- Personal offline viewing
-
-Always respect website terms of service and copyright restrictions.
-
-## 📄 License
-
-MIT License
+This project is licensed under the MIT License - see the LICENSE file for details.

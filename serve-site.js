@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Configuration
-const PORT = 3000;
+const PORT = 8080; // Changed to higher port 8080 that doesn't require admin privileges
 const DEFAULT_SITE = 'joincobalt.com';
 
 // Get site name from command line arguments

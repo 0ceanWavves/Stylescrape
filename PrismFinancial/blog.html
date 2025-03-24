@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/styles.css">
+  <title>PrismFinancial Blog | Financial Insights for Small Businesses</title>
+  <meta name="description" content="Stay updated with the latest financial tips, insights, and strategies for small businesses with the PrismFinancial blog.">
+  <style>
+    /* Base styles */
+    body {
+      background-color: #09090b;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+    }
+    
+    /* Header and navigation */
+    .header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1.5rem 0;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .nav-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .nav-links a:hover {
+      color: #f8fafc;
+    }
+
+    .logo {
+      height: 2.5rem;
+    }
+    
+    /* Blog header */
+    .blog-header {
+      padding: 4rem 0;
+      text-align: center;
+    }
+    
+    .blog-title {
+      font-size: 3rem;
+      font-weight: bold;
+      background: linear-gradient(to bottom right, white, #71717a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.5rem;
+    }
+    
+    .blog-subtitle {
+      font-size: 1.25rem;
+      color: #94a3b8;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    /* Blog grid */
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2.5rem;
+      margin-bottom: 5rem;
+    }
+    
+    /* Blog cards */
+    .blog-card {
+      background-color: rgba(24, 24, 27, 0.5);
+      border-radius: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .blog-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .card-image {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+    }
+    
+    .card-content {
+      padding: 1.5rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .card-date {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-bottom: 0.75rem;
+    }
+    
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 0.75rem;
+    }
+    
+    .card-excerpt {
+      color: #94a3b8;
+      font-size: 0.875rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .card-footer {
+      margin-top: auto;
+    }
+    
+    .read-more {
+      display: inline-flex;
+      align-items: center;
+      color: #38bdf8;
+      font-size: 0.875rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .read-more:hover {
+      color: #7dd3fc;
+    }
+    
+    .read-more svg {
+      margin-left: 0.5rem;
+      transition: transform 0.2s;
+    }
+    
+    .read-more:hover svg {
+      transform: translateX(3px);
+    }
+    
+    /* Featured post */
+    .featured-post {
+      grid-column: 1 / -1;
+      background-color: rgba(31, 41, 55, 0.5);
+      border-radius: 1rem;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+    
+    @media (min-width: 768px) {
+      .featured-post {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    .featured-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .featured-content {
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .featured-badge {
+      display: inline-block;
+      background-color: rgba(56, 189, 248, 0.2);
+      color: #38bdf8;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      margin-bottom: 1rem;
+    }
+    
+    .featured-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1rem;
+    }
+    
+    .featured-excerpt {
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+    }
+    
+    /* Categories */
+    .categories {
+      margin: 4rem 0;
+    }
+    
+    .categories-heading {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 1.5rem;
+    }
+    
+    .category-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    
+    .category-btn {
+      background-color: rgba(24, 24, 27, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 9999px;
+      color: #94a3b8;
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .category-btn:hover, .category-btn.active {
+      background-color: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.5);
+      color: #38bdf8;
+    }
+    
+    /* Newsletter */
+    .newsletter {
+      background-color: rgba(31, 41, 55, 0.4);
+      border-radius: 1rem;
+      padding: 3rem;
+      margin: 5rem 0;
+      text-align: center;
+    }
+    
+    .newsletter-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1rem;
+    }
+    
+    .newsletter-subtitle {
+      color: #94a3b8;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    
+    .newsletter-form {
+      display: flex;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    
+    .newsletter-input {
+      flex-grow: 1;
+      background-color: rgba(17, 24, 39, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.5rem 0 0 0.5rem;
+      color: white;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+    }
+    
+    .newsletter-input:focus {
+      outline: none;
+      border-color: #38bdf8;
+    }
+    
+    .newsletter-button {
+      background-color: #38bdf8;
+      color: white;
+      border: none;
+      border-radius: 0 0.5rem 0.5rem 0;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .newsletter-button:hover {
+      background-color: #0ea5e9;
+    }
+    
+    /* Footer */
+    .footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 3rem 0;
+      text-align: center;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .footer-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    
+    .footer-links a:hover {
+      color: #f8fafc;
+    }
+    
+    .copyright {
+      color: #71717a;
+      font-size: 0.875rem;
+    }
+    
+    /* Utilities */
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 2rem;
+      background: linear-gradient(to right, white, #71717a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/">
+          <img src="assets/prism-logo.svg" alt="PrismFinancial Logo" class="logo">
+        </a>
+        <div class="nav-links">
+          <a href="/">Home</a>
+          <a href="#features">Features</a>
+          <a href="#dashboard">Dashboard</a>
+          <a href="/blog" class="active">Blog</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="blog-header">
+      <div class="container">
+        <h1 class="blog-title">PrismFinancial Blog</h1>
+        <p class="blog-subtitle">Expert insights, financial tips, and strategies to help your small business thrive in today's digital economy.</p>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="categories">
+        <h2 class="categories-heading">Categories</h2>
+        <div class="category-list">
+          <button class="category-btn active">All</button>
+          <button class="category-btn">Financial Planning</button>
+          <button class="category-btn">Cash Flow</button>
+          <button class="category-btn">Business Growth</button>
+          <button class="category-btn">Technology</button>
+          <button class="category-btn">Tax Tips</button>
+        </div>
+      </div>
+
+      <div class="blog-grid">
+        <article class="featured-post">
+          <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Financial planning for small businesses" class="featured-image">
+          <div class="featured-content">
+            <span class="featured-badge">Featured</span>
+            <h2 class="featured-title">The Small Business Guide to Financial Planning in 2025</h2>
+            <p class="featured-excerpt">Navigate the complexities of financial planning in the current economic landscape with these proven strategies designed specifically for small businesses.</p>
+            <div class="card-footer">
+              <a href="#" class="read-more">
+                Read full article
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="blog-card">
+          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Cash flow management techniques" class="card-image">
+          <div class="card-content">
+            <div class="card-date">March 5, 2025</div>
+            <h3 class="card-title">5 Cash Flow Management Techniques Every Business Owner Should Know</h3>
+            <p class="card-excerpt">Effective cash flow management is the backbone of sustainable business growth. Learn the essential techniques to optimize your cash position.</p>
+            <div class="card-footer">
+              <a href="#" class="read-more">
+                Read more
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="blog-card">
+          <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="AI financial tools" class="card-image">
+          <div class="card-content">
+            <div class="card-date">February 28, 2025</div>
+            <h3 class="card-title">How AI Is Revolutionizing Financial Management for Small Businesses</h3>
+            <p class="card-excerpt">Artificial intelligence is transforming how small businesses handle their finances. Discover how AI-powered tools can save you time and money.</p>
+            <div class="card-footer">
+              <a href="#" class="read-more">
+                Read more
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="blog-card">
+          <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Tax strategies" class="card-image">
+          <div class="card-content">
+            <div class="card-date">February 15, 2025</div>
+            <h3 class="card-title">Tax Strategies That Could Save Your Business Thousands This Year</h3>
+            <p class="card-excerpt">With tax season approaching, now is the time to implement these proven strategies that could significantly reduce your business tax burden.</p>
+            <div class="card-footer">
+              <a href="#" class="read-more">
+                Read more
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="blog-card">
+          <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Business funding" class="card-image">
+          <div class="card-content">
+            <div class="card-date">February 8, 2025</div>
+            <h3 class="card-title">The Ultimate Guide to Funding Options for Growing Businesses</h3>
+            <p class="card-excerpt">From traditional loans to innovative crowdfunding, explore the range of funding options available to fuel your business's next stage of growth.</p>
+            <div class="card-footer">
+              <a href="#" class="read-more">
+                Read more
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="blog-card">
+          <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Financial reporting" class="card-image">
+          <div class="card-content">
+            <div class="card-date">January 30, 2025</div>
+            <h3 class="card-title">Mastering Financial Reporting: What Numbers Really Matter</h3>
+            <p class="card-excerpt">Not all financial metrics are created equal. Learn which key performance indicators truly drive business success and how to track them effectively.</p>
+            <div class="card-footer">
+              <a href="#" class="read-more">
+                Read more
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="newsletter">
+        <h2 class="newsletter-title">Subscribe to Our Newsletter</h2>
+        <p class="newsletter-subtitle">Stay up to date with the latest financial insights and strategies delivered directly to your inbox.</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Enter your email address" class="newsletter-input" required>
+          <button type="submit" class="newsletter-button">Subscribe</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="#features">Features</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="/blog">Blog</a>
+        <a href="#privacy">Privacy Policy</a>
+        <a href="#terms">Terms of Service</a>
+      </div>
+      <p class="copyright">© 2025 PrismFinancial Technologies Inc. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Simple category filter functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const categoryButtons = document.querySelectorAll('.category-btn');
+      
+      categoryButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          // Remove active class from all buttons
+          categoryButtons.forEach(btn => btn.classList.remove('active'));
+          
+          // Add active class to clicked button
+          this.classList.add('active');
+          
+          // In a real implementation, this would filter the blog posts
+          // For this demo, we'll just show a message
+          console.log('Filter by:', this.textContent.trim());
+        });
+      });
+    });
+  </script>
+</body>
+</html>

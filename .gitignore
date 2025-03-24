@@ -5,8 +5,14 @@ yarn.lock
 
 # Cloned and generated sites
 cloned-sites/
+cloned-site/
 static-sites/
 design-reports/
+design-elements/
+
+# Build files
+website-cloner-gui/build/
+website-cloner-gui/.netlify/
 
 # Logs
 logs
@@ -23,3 +29,6 @@ Thumbs.db
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Large files
+.repomix-output.txt

@@ -1,0 +1,137 @@
+/* Main styles for Prism Financial Systems */
+:root {
+  --primary-blue: #1C64F2;
+  --dark-navy: #111827;
+  --dark-gray: #374151;
+  --medium-gray: #9CA3AF;
+  --light-gray: #F3F4F6;
+  --success-green: #10B981;
+  --warning-yellow: #F59E0B;
+  --error-red: #EF4444;
+}
+
+/* Quick overrides */
+.bg-gradient-1 {
+  background: radial-gradient(circle, rgba(29, 78, 216, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+.bg-gradient-2 {
+  background: radial-gradient(circle, rgba(29, 78, 216, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+/* Synthed AI Component Styles */
+.synthed-ai-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+.synthed-ai-card {
+  background-color: rgba(17, 24, 39, 0.6);
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex: 1;
+  padding: 1.5rem;
+  position: relative;
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+.synthed-ai-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: white;
+}
+
+.synthed-ai-description {
+  color: rgba(156, 163, 175, 0.8);
+  font-size: 0.875rem;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.synthed-chart-container {
+  position: relative;
+  flex-grow: 1;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-alert {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background-color: rgba(17, 24, 39, 0.8);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  max-width: 14rem;
+  z-index: 10;
+}
+
+.chart-alert-icon {
+  color: var(--warning-yellow);
+  flex-shrink: 0;
+}
+
+.chart-alert-title {
+  font-weight: 500;
+  color: #e5e7eb;
+  font-size: 0.75rem;
+}
+
+.chart-alert-message {
+  color: #9ca3af;
+  font-size: 0.7rem;
+}
+
+.chat-bubble {
+  position: relative;
+  background-color: #0ea5e9;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.chat-prompt {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.ask-button {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: rgba(17, 24, 39, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ask-button:hover {
+  background-color: rgba(31, 41, 55, 0.8);
+}

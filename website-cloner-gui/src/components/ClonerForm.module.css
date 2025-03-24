@@ -1,0 +1,21 @@
+.formContainer {
+    padding: 24px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.inputField {
+    margin-bottom: 16px !important;
+}
+
+.checkbox {
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+    display: block !important;
+}
+
+.button {
+    margin-top: 16px !important;
+    padding: 10px 20px !important;
+    min-width: 180px !important;
+} 

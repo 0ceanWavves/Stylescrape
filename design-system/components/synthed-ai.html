@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synthed AI Components - Prism Design System</title>
+    <link rel="stylesheet" href="../css/design-system.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Prism Design System</div>
+            <div class="nav-links">
+                <a href="../index.html">Overview</a>
+                <a href="buttons.html">Buttons</a>
+                <a href="synthed-ai.html" class="active">Synthed AI</a>
+                <a href="#cards">Cards</a>
+                <a href="#alerts">Alerts</a>
+            </div>
+        </nav>
+    </header>
+    
+    <main>
+        <section id="synthed-ai">
+            <h1>Synthed AI Components</h1>
+            <p>Synthed AI components blend visual appeal with functional utility, creating an intuitive interface for AI-powered financial insights.</p>
+            
+            <div class="component-grid">
+                <div class="component-card">
+                    <div class="component-title">Smart Forecasting Card</div>
+                    <div class="component-preview">
+                        <div class="synthed-ai-card" style="min-height: 300px;">
+                            <h3 class="synthed-ai-title">Smart forecasting</h3>
+                            <div class="synthed-chart-container">
+                                <div class="chart-alert">
+                                    <div class="chart-alert-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path>
+                                            <path d="M12 9v4"></path>
+                                            <path d="M12 17h.01"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <div class="chart-alert-title">Critical balance alert</div>
+                                        <div class="chart-alert-message">You will have less than $2,500 in available funds in May</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Simple chart representation -->
+                                <svg width="100%" height="150" viewBox="0 0 400 150">
+                                    <path d="M0,100 L60,80 L120,90 L180,60 L240,30 L300,50 L360,20 L400,40" stroke="#0081F1" stroke-width="2" fill="none" />
+                                    <path d="M0,100 L60,80 L120,90 L180,60 L240,30 L300,50 L360,20 L400,40 L400,150 L0,150 Z" fill="#0081F1" fill-opacity="0.1" />
+                                </svg>
+                            </div>
+                            <p class="synthed-ai-description">Harness the power of Prism's predictive analytics to map out the financial future of your business.</p>
+                        </div>
+                    </div>
+                    <div class="component-code">
+&lt;div class="synthed-ai-card"&gt;
+  &lt;h3 class="synthed-ai-title"&gt;Smart forecasting&lt;/h3&gt;
+  &lt;div class="synthed-chart-container"&gt;
+    &lt;div class="chart-alert"&gt;
+      &lt;div class="chart-alert-icon"&gt;...&lt;/div&gt;
+      &lt;div&gt;
+        &lt;div class="chart-alert-title"&gt;Critical balance alert&lt;/div&gt;
+        &lt;div class="chart-alert-message"&gt;Alert details...&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;!-- Chart SVG --&gt;
+  &lt;/div&gt;
+  &lt;p class="synthed-ai-description"&gt;Description text&lt;/p&gt;
+&lt;/div&gt;
+                    </div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-title">Chat with Synthed AI</div>
+                    <div class="component-preview">
+                        <div class="synthed-ai-card" style="min-height: 300px;">
+                            <h3 class="synthed-ai-title">Chat with Synthed AI</h3>
+                            <div class="synthed-chart-container">
+                                <div class="chat-bubble">
+                                    Hey! How can I help you?
+                                </div>
+                                
+                                <div class="chat-ui" style="display: none;">
+                                    <!-- Chat UI would go here -->
+                                </div>
+                            </div>
+                            
+                            <div class="chat-prompt">
+                                <span>✨</span>
+                                <span>What's our break-even point?</span>
+                            </div>
+                            
+                            <button class="ask-button">
+                                Ask Synthed AI
+                            </button>
+                            
+                            <p class="synthed-ai-description">Just ask. With Synthed AI by your side, navigating the financial maze becomes intuitive and effortless.</p>
+                        </div>
+                    </div>
+                    <div class="component-code">
+&lt;div class="synthed-ai-card"&gt;
+  &lt;h3 class="synthed-ai-title"&gt;Chat with Synthed AI&lt;/h3&gt;
+  &lt;div class="synthed-chart-container"&gt;
+    &lt;div class="chat-bubble"&gt;
+      Hey! How can I help you?
+    &lt;/div&gt;
+    
+    &lt;div class="chat-ui" style="display: none;"&gt;
+      &lt;!-- Chat UI would go here --&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  
+  &lt;div class="chat-prompt"&gt;
+    &lt;span&gt;✨&lt;/span&gt;
+    &lt;span&gt;What's our break-even point?&lt;/span&gt;
+  &lt;/div&gt;
+  
+  &lt;button class="ask-button"&gt;
+    Ask Synthed AI
+  &lt;/button&gt;
+  
+  &lt;p class="synthed-ai-description"&gt;Description text&lt;/p&gt;
+&lt;/div&gt;
+                    </div>
+                </div>
+            </div>
+            
+            <h2>Synthed AI Container</h2>
+            <p>The container for multiple Synthed AI cards provides a consistent layout and spacing.</p>
+            
+            <div class="component-card">
+                <div class="component-title">Synthed AI Container</div>
+                <div class="component-preview">
+                    <div class="synthed-ai-container" style="display: flex; gap: 1.5rem; margin-bottom: 1rem;">
+                        <div style="flex: 1; background-color: rgba(17, 24, 39, 0.6); border-radius: 1rem; border: 1px solid rgba(255, 255, 255, 0.1); padding: 1rem; height: 150px; display: flex; align-items: center; justify-content: center;">
+                            Card 1
+                        </div>
+                        <div style="flex: 1; background-color: rgba(17, 24, 39, 0.6); border-radius: 1rem; border: 1px solid rgba(255, 255, 255, 0.1); padding: 1rem; height: 150px; display: flex; align-items: center; justify-content: center;">
+                            Card 2
+                        </div>
+                    </div>
+                </div>
+                <div class="component-code">
+&lt;div class="synthed-ai-container"&gt;
+  &lt;div class="synthed-ai-card"&gt;...&lt;/div&gt;
+  &lt;div class="synthed-ai-card"&gt;...&lt;/div&gt;
+&lt;/div&gt;
+                </div>
+            </div>
+            
+            <h2>Implementation Guidelines</h2>
+            <div class="intro">
+                <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                    <li>Limit Synthed AI components to 2-3 per page to avoid overwhelming users</li>
+                    <li>Ensure chart data is accurate and properly scaled</li>
+                    <li>Keep alert messages concise and actionable</li>
+                    <li>Chat responses should be helpful and conversational in tone</li>
+                    <li>Use consistent terminology across all AI interactions</li>
+                </ul>
+                
+                <h3>Accessibility Considerations</h3>
+                <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                    <li>Ensure all chart data is available in text format for screen readers</li>
+                    <li>Maintain sufficient color contrast for alerts and notifications</li>
+                    <li>Provide keyboard navigation for all interactive elements</li>
+                    <li>Include clear focus states for all interactive components</li>
+                </ul>
+            </div>
+            
+            <h2>Technical Integration</h2>
+            <p>The Synthed AI components are designed to integrate with your backend AI services. Here are some integration points:</p>
+            
+            <div class="component-card">
+                <div class="component-title">JavaScript Integration</div>
+                <div class="component-code">
+// Example of connecting the Ask button to a backend service
+document.querySelector('.ask-button').addEventListener('click', function() {
+  const question = document.querySelector('.chat-prompt span:last-child').textContent;
+  
+  // Call your AI service
+  fetchAIResponse(question).then(response => {
+    // Display the response in the chat UI
+    displayChatResponse(response);
+  });
+});
+
+function displayChatResponse(response) {
+  const chatUI = document.querySelector('.chat-ui');
+  chatUI.style.display = 'flex';
+  chatUI.innerHTML = `
+    &lt;div style="width: 100%; display: flex; flex-direction: column; gap: 0.5rem;"&gt;
+      &lt;div style="align-self: flex-start; background-color: #1f2937; padding: 0.75rem; border-radius: 0.5rem; max-width: 80%;"&gt;
+        ${question}
+      &lt;/div&gt;
+      &lt;div style="align-self: flex-end; background-color: #0ea5e9; padding: 0.75rem; border-radius: 0.5rem; max-width: 80%;"&gt;
+        ${response}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  `;
+}
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <div class="footer-logo">Prism Financial</div>
+                <p style="color: #9ca3af; margin-bottom: 1rem;">Modern financial tools for the modern business owner.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Design System</h4>
+                <ul class="footer-links">
+                    <li><a href="../index.html">Overview</a></li>
+                    <li><a href="buttons.html">Buttons</a></li>
+                    <li><a href="synthed-ai.html">Synthed AI</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2025 Prism Financial Systems, Inc. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="../js/design-system.js"></script>
+</body>
+</html>

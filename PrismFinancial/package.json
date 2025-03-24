@@ -1,0 +1,12 @@
+{
+  "name": "website-cloner",
+  "version": "1.0.0",
+  "description": "A simple tool to clone websites",
+  "main": "website-cloner.js",
+  "scripts": {
+    "start": "node website-cloner.js"
+  },
+  "dependencies": {
+    "jsdom": "^20.0.3"
+  }
+}

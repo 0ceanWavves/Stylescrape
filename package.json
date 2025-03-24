@@ -8,14 +8,24 @@
     "extract": "node extract-design.js",
     "serve": "node serve-site.js",
     "static": "node static-generator.js",
-    "start": "node website-cloner.js"
+    "start": "node website-cloner.js",
+    "start-server": "node server.js"
   },
   "dependencies": {
-    "jsdom": "^20.0.0"
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.4.8",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsdom": "^20.0.0",
+    "yargs": "^17.7.2"
   },
   "engines": {
     "node": ">=14.0.0"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "cursor-tools": "latest"
+  }
 }
