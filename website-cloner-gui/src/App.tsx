@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ClonerForm from './components/ClonerForm';
 import CloneProgress from './components/CloneProgress';
 import LibraryList from './components/LibraryList';
+import ColorPalette from './components/ColorPalette';
 import { Box, Typography, Alert, CircularProgress } from '@mui/material';
 import logger, { setupGlobalErrorHandling } from './utils/logger';
 
@@ -16,6 +17,10 @@ function App() {
   const [libraries, setLibraries] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [colorPalette, setColorPalette] = useState<{
+    originalPalette: string[];
+    lightenedPalette: string[];
+  }>({ originalPalette: [], lightenedPalette: [] });
 
   // Set up global error handling on component mount
   useEffect(() => {
@@ -36,6 +41,7 @@ function App() {
     setLibraries([]);
     setError(null);
     setSuccess(null);
+    setColorPalette({ originalPalette: [], lightenedPalette: [] });
 
     try {
       // In production with Netlify, use the dedicated function endpoint
@@ -138,6 +144,17 @@ function App() {
         logger.debug('No libraries found in response');
       }
 
+      // Update color palette if available
+      if (data.colorPalette) {
+        setColorPalette({
+          originalPalette: data.colorPalette.originalPalette || [],
+          lightenedPalette: data.colorPalette.lightenedPalette || []
+        });
+        logger.debug('Set color palette', data.colorPalette);
+      } else {
+        logger.debug('No color palette found in response');
+      }
+
       // Set success message
       const successMessage = data.message || `Website cloned successfully! Saved to: ${options.outputPath}`;
       setSuccess(successMessage);
@@ -194,13 +211,20 @@ function App() {
       
       {!cloning && libraries.length > 0 && <LibraryList libraries={libraries} />}
       
+      {!cloning && colorPalette.originalPalette.length > 0 && (
+        <ColorPalette 
+          originalPalette={colorPalette.originalPalette} 
+          lightenedPalette={colorPalette.lightenedPalette} 
+        />
+      )}
+      
       {!cloning && progress.length > 0 && (
         <Box sx={{ mt: 3, p: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
           <Typography variant="h6">Cloning Log:</Typography>
           {progress.map((step, index) => (
-            <Typography key={index} variant="body2" sx={{ fontFamily: 'monospace', my: 0.5 }}>
+            <Box key={index} sx={{ pl: 2, py: 0.5, borderLeft: '2px solid #ccc' }}>
               {step}
-            </Typography>
+            </Box>
           ))}
         </Box>
       )}

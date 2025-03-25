@@ -113,11 +113,106 @@ const extractAssets = (html, baseUrl) => {
   return assets;
 };
 
+// New function to extract and lighten color palette
+const extractColorPalette = (html) => {
+  const $ = cheerio.load(html);
+  const colorMap = {};
+  const colorRegex = /#[0-9a-fA-F]{3,6}|rgba?\([^)]+\)|hsla?\([^)]+\)|[a-zA-Z]+(?=-[0-9]{1,3})|slate-|gray-|zinc-|neutral-|stone-|red-|orange-|amber-|yellow-|lime-|green-|emerald-|teal-|cyan-|sky-|blue-|indigo-|violet-|purple-|fuchsia-|pink-|rose-/g;
+  
+  // Extract colors from style attributes
+  $('[style]').each((i, el) => {
+    const style = $(el).attr('style');
+    const matches = style?.match(colorRegex) || [];
+    matches.forEach(color => {
+      colorMap[color] = (colorMap[color] || 0) + 1;
+    });
+  });
+  
+  // Extract from CSS classes that might contain color information
+  $('[class]').each((i, el) => {
+    const classes = $(el).attr('class');
+    const colorClasses = classes?.split(' ').filter(cls => 
+      cls.match(/bg-|text-|border-|shadow-|fill-|stroke-|from-|to-|via-/)
+    ) || [];
+    
+    colorClasses.forEach(cls => {
+      const colorMatches = cls.match(colorRegex);
+      if (colorMatches) {
+        colorMatches.forEach(color => {
+          colorMap[color] = (colorMap[color] || 0) + 1;
+        });
+      }
+    });
+  });
+  
+  // Sort colors by frequency
+  const sortedColors = Object.entries(colorMap)
+    .sort((a, b) => b[1] - a[1])
+    .map(([color]) => color)
+    .slice(0, 10); // Take top 10 colors
+  
+  // Convert dark colors to lighter equivalents
+  const lightenedPalette = sortedColors.map(color => {
+    if (color.startsWith('#')) {
+      // Simple lightening for hex colors
+      return lightenHexColor(color);
+    } else if (color.includes('slate-') || color.includes('gray-') || color.includes('zinc-') || 
+               color.includes('neutral-') || color.includes('stone-')) {
+      // Convert dark tailwind gray scales to lighter versions
+      return lightenTailwindColor(color);
+    }
+    return color;
+  });
+  
+  return {
+    originalPalette: sortedColors,
+    lightenedPalette: lightenedPalette
+  };
+};
+
+// Helper to lighten hex colors
+const lightenHexColor = (hex) => {
+  // Remove # if present
+  hex = hex.replace('#', '');
+  
+  // Convert to RGB
+  let r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.substring(0, 2), 16);
+  let g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.substring(2, 4), 16);
+  let b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.substring(4, 6), 16);
+  
+  // Check if it's a dark color
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  if (brightness < 128) {
+    // Lighten dark colors
+    r = Math.min(255, Math.floor(r * 1.7));
+    g = Math.min(255, Math.floor(g * 1.7));
+    b = Math.min(255, Math.floor(b * 1.7));
+  }
+  
+  // Convert back to hex
+  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+};
+
+// Helper to convert dark Tailwind colors to lighter versions
+const lightenTailwindColor = (color) => {
+  const parts = color.split('-');
+  const colorName = parts[0];
+  const shade = parseInt(parts[1]);
+  
+  if (shade >= 600) {
+    // Convert dark shade to lighter one
+    return `${colorName}-${Math.max(100, shade - 500)}`;
+  }
+  
+  return color;
+};
+
 // Clone a website - handles the actual website scraping
 const cloneWebsite = async (url, options) => {
   const steps = [];
   const assets = { html: '', stylesheets: [], scripts: [], images: [] };
   const libraries = [];
+  let colorPalette = { originalPalette: [], lightenedPalette: [] };
   
   try {
     // Step 1: Fetch the main HTML
@@ -153,14 +248,20 @@ const cloneWebsite = async (url, options) => {
       steps.push(`Found ${extractedAssets.images.length} images`);
     }
     
-    // Step 4: Finalize
+    // Step 4: Extract and analyze color palette
+    steps.push('Analyzing color palette...');
+    colorPalette = extractColorPalette(html);
+    steps.push(`Detected ${colorPalette.originalPalette.length} colors, created lighter alternatives`);
+    
+    // Step 5: Finalize
     steps.push('Processing completed');
     
     return {
       success: true,
       steps,
       libraries,
-      assets
+      assets,
+      colorPalette
     };
     
   } catch (error) {
@@ -172,6 +273,7 @@ const cloneWebsite = async (url, options) => {
       steps,
       libraries,
       assets,
+      colorPalette,
       error: error.message
     };
   }
@@ -278,7 +380,8 @@ exports.handler = async function(event, context) {
           stylesheetCount: result.assets.stylesheets.length,
           scriptCount: result.assets.scripts.length,
           imageCount: result.assets.images.length
-        }
+        },
+        colorPalette: result.colorPalette
       })
     };
     
