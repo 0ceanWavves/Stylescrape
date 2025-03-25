@@ -1,11 +1,8 @@
 {
   "name": "stylescrape-api",
   "version": "1.0.0",
-  "description": "StyleScrape API serverless function",
-  "main": "server.js",
+  "description": "StyleScrape API serverless functions",
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "serverless-http": "^3.2.0"
+    "cors": "^2.8.5"
   }
 } 

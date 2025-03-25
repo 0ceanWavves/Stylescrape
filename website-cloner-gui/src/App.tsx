@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ClonerForm from './components/ClonerForm';
 import CloneProgress from './components/CloneProgress';
 import LibraryList from './components/LibraryList';
 import { Box, Typography, Alert, CircularProgress } from '@mui/material';
+import logger, { setupGlobalErrorHandling } from './utils/logger';
 
 /**
  * @component
@@ -15,6 +16,12 @@ function App() {
   const [libraries, setLibraries] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // Set up global error handling on component mount
+  useEffect(() => {
+    setupGlobalErrorHandling();
+    logger.info('Website Cloner GUI initialized');
+  }, []);
 
   const containerStyle = {
     fontFamily: 'Roboto, sans-serif',
@@ -31,84 +38,118 @@ function App() {
     setSuccess(null);
 
     try {
-      // In production with Netlify, use the direct function endpoint
+      // In production with Netlify, use the dedicated function endpoint
       // In development, use the specified API URL or localhost:3002
       let apiUrl = '';
+      let cloneEndpoint = '';
       
       if (process.env.NODE_ENV === 'production') {
-        // In production, use the direct function endpoint
-        apiUrl = '/.netlify/functions/server';
+        // In production, use the dedicated function endpoint
+        cloneEndpoint = '/.netlify/functions/clone';
       } else {
         // In development, use the API URL from env or default
         apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3002';
+        cloneEndpoint = `${apiUrl}/api/clone`;
       }
       
-      console.log('Using API URL:', apiUrl);
+      // Ensure URL has a protocol
+      let processedUrl = url;
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        processedUrl = 'https://' + url;
+      }
       
-      // Use direct /clone endpoint
-      const fetchUrl = `${apiUrl}/clone`;
-      
-      // Log the request being sent
-      console.log('Sending request to:', fetchUrl, {
-        url,
-        ...options
+      logger.info('Starting website clone process', { 
+        url: processedUrl,
+        endpoint: cloneEndpoint,
+        options 
       });
       
-      const response = await fetch(fetchUrl, {
+      // Log the API request
+      logger.logApiRequest(cloneEndpoint, 'POST', { 
+        url: processedUrl, 
+        ...options 
+      });
+      
+      const response = await fetch(cloneEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        // Enable credentials in development but not in production
-        credentials: process.env.NODE_ENV === 'production' ? 'omit' : 'include',
-        body: JSON.stringify({ url, ...options }),
+        // Always omit credentials for Netlify Functions
+        credentials: 'omit',
+        body: JSON.stringify({ 
+          url: processedUrl, 
+          ...options 
+        }),
       });
 
-      console.log('Response status:', response.status);
+      logger.info('Received response from clone endpoint', { status: response.status });
       
       if (!response.ok) {
         let errorMessage = 'Cloning failed';
         try {
           const errorData = await response.json();
-          console.log('Error data:', errorData);
+          logger.logApiResponse(cloneEndpoint, response.status, errorData);
+          
           errorMessage = errorData.error || errorMessage;
           if (errorData.details) {
             errorMessage += `: ${errorData.details}`;
           }
         } catch (e) {
           // If the response is not JSON, use the status text
-          console.error('Error parsing error response:', e);
+          logger.error('Error parsing error response', e as Error, { 
+            status: response.status,
+            statusText: response.statusText,
+            url: cloneEndpoint
+          });
+          
           errorMessage = `Cloning failed: ${response.statusText || response.status}`;
         }
         throw new Error(errorMessage);
       }
 
-      // Log that we're parsing the response
-      console.log('Parsing response...');
-      const data = await response.json();
-      console.log('Response data:', data);
+      // Parse the response
+      let data: any;
+      try {
+        data = await response.json();
+        logger.logApiResponse(cloneEndpoint, response.status, data);
+      } catch (e) {
+        logger.error('Error parsing success response', e as Error);
+        throw new Error('Failed to parse server response');
+      }
 
       // Update progress from response
       if (data.steps && Array.isArray(data.steps)) {
         setProgress(data.steps);
+        logger.debug('Set progress steps', data.steps);
       } else if (data.progress && Array.isArray(data.progress)) {
         setProgress(data.progress);
+        logger.debug('Set progress from progress field', data.progress);
+      } else {
+        logger.warn('No progress data found in response');
       }
       
       // Update libraries if available
       if (data.libraries && Array.isArray(data.libraries)) {
         setLibraries(data.libraries);
+        logger.debug('Set libraries', data.libraries);
+      } else {
+        logger.debug('No libraries found in response');
       }
 
       // Set success message
-      setSuccess(data.message || `Website cloned successfully! Saved to: ${options.outputPath}`);
+      const successMessage = data.message || `Website cloned successfully! Saved to: ${options.outputPath}`;
+      setSuccess(successMessage);
+      logger.info('Cloning completed successfully', { message: successMessage });
       
     } catch (err: any) {
-      console.error('Cloning error:', err);
-      setError(err.message || 'An unknown error occurred during the cloning process');
+      const errorMessage = err.message || 'An unknown error occurred during the cloning process';
+      logger.error('Cloning process failed', err as Error, { url, options });
+      setError(errorMessage);
     } finally {
       setCloning(false);
+      logger.debug('Cloning process state reset', { cloning: false });
     }
   };
 

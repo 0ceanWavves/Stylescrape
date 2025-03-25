@@ -1,12 +1,14 @@
-# Netlify redirects file - routes API requests to serverless functions
+# Netlify redirects file - routes to serverless functions
 
-# Direct API routes to serverless function - will normalize paths inside the function
-/api/*  /.netlify/functions/server/:splat  200
+# API endpoints map to dedicated functions
+/api/clone  /.netlify/functions/clone  200
+/api/health  /.netlify/functions/health  200
+/api/log-error  /.netlify/functions/log-error  200
 
-# Alternate direct access to function endpoints
-/clone  /.netlify/functions/server/clone  200
-/health  /.netlify/functions/server/health  200
-/sites  /.netlify/functions/server/sites  200
+# Direct access to functions (no /api prefix)
+/clone  /.netlify/functions/clone  200
+/health  /.netlify/functions/health  200
+/log-error  /.netlify/functions/log-error  200
 
 # SPA fallback
 /*    /index.html   200 

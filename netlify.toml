@@ -10,17 +10,4 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# Create a serverless function from our server.js
-[[plugins]]
-  package = "@netlify/plugin-functions-install-core"
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/server/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200 
+# No plugins or custom redirects needed as we're using the _redirects file 
