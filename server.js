@@ -60,7 +60,7 @@ app.get('/favicon.ico', (req, res) => {
 });
 
 // API endpoint for cloning
-app.post('/api/clone', (req, res) => {
+app.post('/api/clone', async (req, res) => {
     const { url, cloneAssets, extractLibraries, outputPath } = req.body;
     
     if (!url) {
@@ -128,13 +128,31 @@ app.post('/api/clone', (req, res) => {
         // Extract libraries if requested
         const detectedLibraries = extractLibraries(stdoutData);
         
-        // Return success with progress steps, libraries, and download URL
+        // Create a zip file of the cloned site
+        const sitePath = outputPath || 'cloned-site';
+        const archive = archiver('zip', {
+            zlib: { level: 9 } // Maximum compression
+        });
+        
+        // Set the headers
+        res.attachment('cloned-site.zip');
+        
+        // Pipe archive data to the response
+        archive.pipe(res);
+        
+        // Add the directory contents to the archive
+        archive.directory(sitePath, false);
+        
+        // Finalize the archive and send the response
+        archive.finalize();
+        
+        // Return success with progress steps and libraries
         res.status(200).json({
             success: true,
             message: 'Website cloning completed',
             progress: progressSteps,
             libraries: detectedLibraries,
-            downloadUrl: `/api/download/${outputPath || 'cloned-site'}`
+            downloadUrl: `/api/download/${sitePath}`
         });
     });
 });
