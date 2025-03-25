@@ -1,7 +1,7 @@
 [build]
   base = "."
   publish = "website-cloner-gui/build/"
-  command = "cd website-cloner-gui && npm install && npm run build && cd ../netlify/functions && npm install"
+  command = "cd website-cloner-gui && npm install && npm run build && cd .. && cd netlify && npm install && cd functions && npm install"
 
 [build.environment]
   NODE_VERSION = "16"
@@ -10,4 +10,8 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# No plugins or custom redirects needed as we're using the _redirects file 
+# No plugins or custom redirects needed as we're using the _redirects file
+
+# Add the functions install plugin to ensure dependencies are properly installed
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core" 
