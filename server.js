@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const { exec } = require('child_process');
 const { spawn } = require('child_process');
+const archiver = require('archiver');
+const path = require('path');
+const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -125,12 +128,13 @@ app.post('/api/clone', (req, res) => {
         // Extract libraries if requested
         const detectedLibraries = extractLibraries(stdoutData);
         
-        // Return success with progress steps and libraries
+        // Return success with progress steps, libraries, and download URL
         res.status(200).json({
             success: true,
             message: 'Website cloning completed',
             progress: progressSteps,
-            libraries: detectedLibraries
+            libraries: detectedLibraries,
+            downloadUrl: `/api/download/${outputPath || 'cloned-site'}`
         });
     });
 });
@@ -152,6 +156,33 @@ app.use('/sites', express.static('cloned-site'));
 
 // Serve static files from the public directory
 app.use(express.static('public'));
+
+// Add new endpoint for downloading as zip
+app.get('/api/download/:sitePath', (req, res) => {
+    const sitePath = path.join(process.cwd(), req.params.sitePath);
+    
+    // Check if directory exists
+    if (!fs.existsSync(sitePath)) {
+        return res.status(404).json({ error: 'Site directory not found' });
+    }
+
+    // Create a zip file
+    const archive = archiver('zip', {
+        zlib: { level: 9 } // Maximum compression
+    });
+
+    // Set the headers
+    res.attachment('cloned-site.zip');
+
+    // Pipe archive data to the response
+    archive.pipe(res);
+
+    // Add the directory contents to the archive
+    archive.directory(sitePath, false);
+
+    // Finalize the archive
+    archive.finalize();
+});
 
 // Root path handler (fallback to API info if HTML isn't available)
 app.get('/', (req, res, next) => {

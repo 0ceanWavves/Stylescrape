@@ -39,7 +39,7 @@ function App() {
 
     try {
       // In production with Netlify, use the dedicated function endpoint
-      // In development, use the specified API URL or localhost:3002
+      // In development, use the specified API URL or localhost:3001
       let apiUrl = '';
       let cloneEndpoint = '';
       
@@ -48,7 +48,7 @@ function App() {
         cloneEndpoint = '/.netlify/functions/clone';
       } else {
         // In development, use the API URL from env or default
-        apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3002';
+        apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
         cloneEndpoint = `${apiUrl}/api/clone`;
       }
       
@@ -142,6 +142,12 @@ function App() {
       const successMessage = data.message || `Website cloned successfully! Saved to: ${options.outputPath}`;
       setSuccess(successMessage);
       logger.info('Cloning completed successfully', { message: successMessage });
+      
+      // If there's a download URL, trigger the download
+      if (data.downloadUrl) {
+        const downloadUrl = `${apiUrl}${data.downloadUrl}`;
+        window.location.href = downloadUrl;
+      }
       
     } catch (err: any) {
       const errorMessage = err.message || 'An unknown error occurred during the cloning process';
