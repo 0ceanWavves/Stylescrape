@@ -1,7 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const { exec } = require('child_process');
-const { spawn } = require('child_process');
 const serverless = require('serverless-http');
 const app = express();
 
@@ -31,49 +29,93 @@ app.use((req, res, next) => {
 
 app.use(express.json()); // Parse JSON request bodies
 
+// Log all requests to help debug
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  console.log('Request body:', req.body);
+  next();
+});
+
+// Path normalization middleware - handles both direct and nested API paths
+app.use((req, res, next) => {
+  // Remove /api prefix if it appears at the start of the path
+  if (req.path.startsWith('/api/')) {
+    req.url = req.url.replace('/api', '');
+    console.log('Normalized path:', req.url);
+  }
+  next();
+});
+
 // Mock cloning function for Netlify (without actual file system access)
-app.post('/api/clone', (req, res) => {
-  const { url, cloneAssets, extractLibraries } = req.body;
+// Handle both root paths and paths with prefixes
+app.post('/clone', (req, res) => {
+  const { url, cloneAssets, extractLibraries } = req.body || {};
   
-  console.log(`Cloning request received for: ${url}`);
+  console.log(`Cloning request received for: ${url || 'unknown URL'}`);
+  
+  if (!url) {
+    return res.status(400).json({
+      success: false,
+      error: 'Missing URL parameter',
+      details: 'Please provide a valid URL to clone'
+    });
+  }
   
   // Generate a simulated response
   setTimeout(() => {
-    const libraries = [];
-    
-    // Add libraries based on URL to simulate detection
-    const urlLower = url.toLowerCase();
-    if (urlLower.includes('react')) libraries.push('React');
-    if (urlLower.includes('bootstrap') || Math.random() > 0.7) libraries.push('Bootstrap');
-    if (Math.random() > 0.6) libraries.push('jQuery');
-    if (Math.random() > 0.8) libraries.push('Font Awesome');
-    if (Math.random() > 0.7) libraries.push('Google Analytics');
-    
-    // Create a log of "downloaded" files
-    const steps = [
-      `Cloning started for ${url}`,
-      'Downloaded index.html',
-      'Processing links...',
-      'Downloaded style.css',
-      'Downloaded main.js',
-      'Downloaded image1.png',
-      'Downloaded image2.jpg',
-      'Updating local references...',
-      'Cloning completed'
-    ];
-    
-    // Send successful response
-    res.json({
-      success: true,
-      message: `Website ${url} cloned successfully (simulation)`,
-      libraries: libraries,
-      steps: steps
-    });
+    try {
+      const libraries = [];
+      
+      // Add libraries based on URL to simulate detection
+      const urlLower = url.toLowerCase();
+      if (urlLower.includes('react')) libraries.push('React');
+      if (urlLower.includes('bootstrap') || Math.random() > 0.7) libraries.push('Bootstrap');
+      if (Math.random() > 0.6) libraries.push('jQuery');
+      if (Math.random() > 0.8) libraries.push('Font Awesome');
+      if (Math.random() > 0.7) libraries.push('Google Analytics');
+      
+      // Create a log of "downloaded" files
+      const steps = [
+        `Cloning started for ${url}`,
+        'Downloaded index.html',
+        'Processing links...',
+        'Downloaded style.css',
+        'Downloaded main.js',
+        'Downloaded image1.png',
+        'Downloaded image2.jpg',
+        'Updating local references...',
+        'Cloning completed'
+      ];
+      
+      // Send successful response
+      res.json({
+        success: true,
+        message: `Website ${url} cloned successfully (simulation)`,
+        libraries: libraries,
+        steps: steps
+      });
+    } catch (error) {
+      console.error('Error in clone endpoint:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Server error',
+        details: error.message
+      });
+    }
   }, 2000);
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'StyleScrape API is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Mock API to get sites
-app.get('/api/sites', (req, res) => {
+app.get('/sites', (req, res) => {
   res.json({
     sites: [
       { name: 'example', url: 'https://example.com' }
@@ -85,17 +127,11 @@ app.get('/api/sites', (req, res) => {
 app.get('/', (req, res) => {
   res.json({
     message: 'StyleScrape API - Netlify Serverless Function',
-    status: 'running'
+    status: 'running',
+    version: '1.0.0',
+    timestamp: new Date().toISOString()
   });
 });
-
-// For local development
-if (process.env.LOCAL) {
-  const PORT = process.env.PORT || 3002;
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}
 
 // Export handler for serverless function
 exports.handler = serverless(app); 

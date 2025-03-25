@@ -31,15 +31,30 @@ function App() {
     setSuccess(null);
 
     try {
-      // In production with Netlify, use relative URL to access serverless function
+      // In production with Netlify, use the direct function endpoint
       // In development, use the specified API URL or localhost:3002
-      const apiUrl = process.env.NODE_ENV === 'production'
-        ? '/.netlify/functions/server' // Use Netlify's serverless function path
-        : (process.env.REACT_APP_API_URL || 'http://localhost:3002');
+      let apiUrl = '';
+      
+      if (process.env.NODE_ENV === 'production') {
+        // In production, use the direct function endpoint
+        apiUrl = '/.netlify/functions/server';
+      } else {
+        // In development, use the API URL from env or default
+        apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3002';
+      }
       
       console.log('Using API URL:', apiUrl);
       
-      const response = await fetch(`${apiUrl}/api/clone`, {
+      // Use direct /clone endpoint
+      const fetchUrl = `${apiUrl}/clone`;
+      
+      // Log the request being sent
+      console.log('Sending request to:', fetchUrl, {
+        url,
+        ...options
+      });
+      
+      const response = await fetch(fetchUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,25 +65,34 @@ function App() {
         body: JSON.stringify({ url, ...options }),
       });
 
+      console.log('Response status:', response.status);
+      
       if (!response.ok) {
         let errorMessage = 'Cloning failed';
         try {
           const errorData = await response.json();
+          console.log('Error data:', errorData);
           errorMessage = errorData.error || errorMessage;
           if (errorData.details) {
             errorMessage += `: ${errorData.details}`;
           }
         } catch (e) {
           // If the response is not JSON, use the status text
-          errorMessage = `Cloning failed: ${response.statusText}`;
+          console.error('Error parsing error response:', e);
+          errorMessage = `Cloning failed: ${response.statusText || response.status}`;
         }
         throw new Error(errorMessage);
       }
 
+      // Log that we're parsing the response
+      console.log('Parsing response...');
       const data = await response.json();
+      console.log('Response data:', data);
 
-      // Update progress
-      if (data.progress && Array.isArray(data.progress)) {
+      // Update progress from response
+      if (data.steps && Array.isArray(data.steps)) {
+        setProgress(data.steps);
+      } else if (data.progress && Array.isArray(data.progress)) {
         setProgress(data.progress);
       }
       
@@ -78,11 +102,11 @@ function App() {
       }
 
       // Set success message
-      setSuccess(`Website cloned successfully! Saved to: ${options.outputPath}`);
+      setSuccess(data.message || `Website cloned successfully! Saved to: ${options.outputPath}`);
       
     } catch (err: any) {
       console.error('Cloning error:', err);
-      setError(err.message || 'An unknown error occurred');
+      setError(err.message || 'An unknown error occurred during the cloning process');
     } finally {
       setCloning(false);
     }
