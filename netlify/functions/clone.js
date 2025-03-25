@@ -1,5 +1,9 @@
 // Dedicated clone function for Netlify
 const cors = require('cors');
+const axios = require('axios');
+const cheerio = require('cheerio');
+const path = require('path');
+const { URL } = require('url');
 
 // Helper for CORS headers
 const handleCors = (headers) => {
@@ -41,13 +45,143 @@ const handleOptions = () => {
   };
 };
 
+// Helper function to detect libraries from HTML
+const detectLibraries = (html) => {
+  const libraries = [];
+  
+  // Check for common libraries
+  if (html.includes('jquery')) libraries.push('jQuery');
+  if (html.includes('bootstrap')) libraries.push('Bootstrap');
+  if (html.includes('react')) libraries.push('React');
+  if (html.includes('angular')) libraries.push('Angular');
+  if (html.includes('vue')) libraries.push('Vue.js');
+  if (html.includes('font-awesome') || html.includes('fontawesome')) libraries.push('Font Awesome');
+  if (html.includes('google-analytics') || html.includes('gtag')) libraries.push('Google Analytics');
+  if (html.includes('tailwind')) libraries.push('Tailwind CSS');
+  
+  return libraries;
+};
+
+// Function to extract assets (CSS, JS, images) from HTML
+const extractAssets = (html, baseUrl) => {
+  const $ = cheerio.load(html);
+  const assets = {
+    stylesheets: [],
+    scripts: [],
+    images: []
+  };
+  
+  // Extract CSS
+  $('link[rel="stylesheet"]').each((i, el) => {
+    const href = $(el).attr('href');
+    if (href) {
+      try {
+        const fullUrl = new URL(href, baseUrl).href;
+        assets.stylesheets.push(fullUrl);
+      } catch (e) {
+        logError(`Invalid CSS URL: ${href}`, e);
+      }
+    }
+  });
+  
+  // Extract JS
+  $('script').each((i, el) => {
+    const src = $(el).attr('src');
+    if (src) {
+      try {
+        const fullUrl = new URL(src, baseUrl).href;
+        assets.scripts.push(fullUrl);
+      } catch (e) {
+        logError(`Invalid script URL: ${src}`, e);
+      }
+    }
+  });
+  
+  // Extract images
+  $('img').each((i, el) => {
+    const src = $(el).attr('src');
+    if (src) {
+      try {
+        const fullUrl = new URL(src, baseUrl).href;
+        assets.images.push(fullUrl);
+      } catch (e) {
+        logError(`Invalid image URL: ${src}`, e);
+      }
+    }
+  });
+  
+  return assets;
+};
+
+// Clone a website - handles the actual website scraping
+const cloneWebsite = async (url, options) => {
+  const steps = [];
+  const assets = { html: '', stylesheets: [], scripts: [], images: [] };
+  const libraries = [];
+  
+  try {
+    // Step 1: Fetch the main HTML
+    steps.push(`Cloning started for ${url}`);
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) StyleScrape/1.0'
+      },
+      timeout: 8000 // Netlify functions have time limits
+    });
+    
+    const html = response.data;
+    assets.html = html;
+    steps.push('Downloaded index.html');
+    
+    // Step 2: Detect libraries
+    steps.push('Analyzing for libraries and technologies...');
+    const detectedLibraries = detectLibraries(html);
+    libraries.push(...detectedLibraries);
+    
+    // Step 3: Extract assets if requested
+    if (options.cloneAssets) {
+      steps.push('Extracting asset URLs...');
+      const extractedAssets = extractAssets(html, url);
+      
+      // Limited asset download to avoid timeouts (just keeping URLs is faster)
+      assets.stylesheets = extractedAssets.stylesheets;
+      assets.scripts = extractedAssets.scripts;
+      assets.images = extractedAssets.images.slice(0, 5); // Limit to first 5 images to avoid timeout
+      
+      steps.push(`Found ${extractedAssets.stylesheets.length} CSS files`);
+      steps.push(`Found ${extractedAssets.scripts.length} JavaScript files`);
+      steps.push(`Found ${extractedAssets.images.length} images`);
+    }
+    
+    // Step 4: Finalize
+    steps.push('Processing completed');
+    
+    return {
+      success: true,
+      steps,
+      libraries,
+      assets
+    };
+    
+  } catch (error) {
+    logError(`Error cloning website: ${url}`, error);
+    steps.push(`Error: ${error.message}`);
+    
+    return {
+      success: false,
+      steps,
+      libraries,
+      assets,
+      error: error.message
+    };
+  }
+};
+
 exports.handler = async function(event, context) {
   // Log function invocation with context ID
   logInfo(`Function invoked with ID: ${context.awsRequestId || 'local'}`, {
     path: event.path,
-    method: event.httpMethod,
-    headers: event.headers,
-    queryParams: event.queryStringParameters
+    method: event.httpMethod
   });
   
   // Handle preflight CORS request
@@ -65,11 +199,7 @@ exports.handler = async function(event, context) {
         body: JSON.stringify({ 
           success: false,
           error: 'Method not allowed',
-          details: 'Only POST requests are supported',
-          debug: {
-            receivedMethod: event.httpMethod,
-            timestamp: new Date().toISOString()
-          }
+          details: 'Only POST requests are supported'
         })
       };
     }
@@ -79,7 +209,6 @@ exports.handler = async function(event, context) {
     try {
       logInfo('Parsing request body');
       requestBody = JSON.parse(event.body);
-      logInfo('Request body parsed successfully', requestBody);
     } catch (e) {
       logError('Failed to parse request body', e);
       return {
@@ -88,18 +217,13 @@ exports.handler = async function(event, context) {
         body: JSON.stringify({ 
           success: false, 
           error: 'Invalid request body',
-          details: 'Request body must be valid JSON',
-          debug: {
-            receivedBody: event.body,
-            parsingError: e.message,
-            timestamp: new Date().toISOString()
-          }
+          details: 'Request body must be valid JSON'
         })
       };
     }
     
     // Check for required URL parameter
-    const { url } = requestBody;
+    const { url, cloneAssets = true, extractLibraries = true } = requestBody;
     if (!url) {
       logInfo('Missing URL parameter in request');
       return {
@@ -108,44 +232,37 @@ exports.handler = async function(event, context) {
         body: JSON.stringify({ 
           success: false, 
           error: 'Missing parameter',
-          details: 'URL parameter is required',
-          debug: {
-            receivedParams: Object.keys(requestBody),
-            timestamp: new Date().toISOString()
-          }
+          details: 'URL parameter is required'
         })
       };
     }
     
-    logInfo(`Processing cloning request for URL: ${url}`, requestBody);
+    logInfo(`Processing cloning request for URL: ${url}`, { cloneAssets, extractLibraries });
     
-    // Simulate cloning process with a mocked response
-    const libraries = [];
+    // Perform the actual website cloning
+    const result = await cloneWebsite(url, { cloneAssets, extractLibraries });
     
-    // Add libraries based on URL to simulate detection
-    const urlLower = url.toLowerCase();
-    if (urlLower.includes('react')) libraries.push('React');
-    if (urlLower.includes('bootstrap') || Math.random() > 0.7) libraries.push('Bootstrap');
-    if (Math.random() > 0.6) libraries.push('jQuery');
-    if (Math.random() > 0.8) libraries.push('Font Awesome');
-    if (Math.random() > 0.7) libraries.push('Google Analytics');
+    if (!result.success) {
+      return {
+        statusCode: 500,
+        headers: handleCors(),
+        body: JSON.stringify({
+          success: false,
+          message: `Failed to clone website: ${result.error}`,
+          steps: result.steps
+        })
+      };
+    }
     
-    // Create a log of "downloaded" files
-    const steps = [
-      `Cloning started for ${url}`,
-      'Downloaded index.html',
-      'Processing links...',
-      'Downloaded style.css',
-      'Downloaded main.js',
-      'Downloaded image1.png',
-      'Downloaded image2.jpg',
-      'Updating local references...',
-      'Cloning completed'
-    ];
-    
-    logInfo('Cloning simulation completed successfully', { 
-      libraries, 
-      stepCount: steps.length 
+    logInfo('Cloning completed successfully', { 
+      url,
+      libraries: result.libraries, 
+      stepCount: result.steps.length,
+      assetCounts: {
+        css: result.assets.stylesheets.length,
+        js: result.assets.scripts.length,
+        images: result.assets.images.length
+      }
     });
     
     // Return successful response
@@ -154,13 +271,13 @@ exports.handler = async function(event, context) {
       headers: handleCors(),
       body: JSON.stringify({
         success: true,
-        message: `Website ${url} cloned successfully (simulation)`,
-        libraries: libraries,
-        steps: steps,
-        debug: {
-          functionId: context.awsRequestId || 'local',
-          processingTime: `${new Date().getTime() - new Date(event.requestContext?.timeEpoch || Date.now()).getTime()}ms`,
-          timestamp: new Date().toISOString()
+        message: `Website ${url} cloned successfully`,
+        libraries: result.libraries,
+        steps: result.steps,
+        assets: {
+          stylesheetCount: result.assets.stylesheets.length,
+          scriptCount: result.assets.scripts.length,
+          imageCount: result.assets.images.length
         }
       })
     };
@@ -175,13 +292,7 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({
         success: false,
         error: 'Server error',
-        details: error.message,
-        debug: {
-          functionId: context.awsRequestId || 'local',
-          errorName: error.name,
-          errorStack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
-          timestamp: new Date().toISOString()
-        }
+        details: error.message
       })
     };
   }
