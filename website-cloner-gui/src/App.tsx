@@ -31,15 +31,22 @@ function App() {
     setSuccess(null);
 
     try {
-      // Ensure we're connecting to the correct port (port can be 3001 or 3002)
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3002';
+      // In production with Netlify, use relative URL to access serverless function
+      // In development, use the specified API URL or localhost:3002
+      const apiUrl = process.env.NODE_ENV === 'production'
+        ? '/.netlify/functions/server' // Use Netlify's serverless function path
+        : (process.env.REACT_APP_API_URL || 'http://localhost:3002');
+      
+      console.log('Using API URL:', apiUrl);
+      
       const response = await fetch(`${apiUrl}/api/clone`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        credentials: 'omit', // Don't send cookies
+        // Enable credentials in development but not in production
+        credentials: process.env.NODE_ENV === 'production' ? 'omit' : 'include',
         body: JSON.stringify({ url, ...options }),
       });
 

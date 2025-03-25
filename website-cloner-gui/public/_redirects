@@ -1,1 +1,8 @@
+# Netlify redirects file - routes API requests to serverless functions
+
+# API routes to serverless functions
+/.netlify/functions/*  /.netlify/functions/:splat  200
+/api/*  /.netlify/functions/server/api/:splat  200
+
+# SPA fallback
 /*    /index.html   200 

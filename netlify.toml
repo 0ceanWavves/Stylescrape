@@ -1,10 +1,24 @@
 [build]
-  base = "website-cloner-gui/"
-  publish = "build/"
-  command = "npm install && npm run build"
+  base = "."
+  publish = "website-cloner-gui/build/"
+  command = "cd website-cloner-gui && npm install && npm run build && cd ../netlify/functions && npm install"
 
 [build.environment]
   NODE_VERSION = "16"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Create a serverless function from our server.js
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/server/:splat"
+  status = 200
+  force = true
 
 [[redirects]]
   from = "/*"
