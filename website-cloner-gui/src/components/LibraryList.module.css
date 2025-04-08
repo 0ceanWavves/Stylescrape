@@ -1,8 +1,38 @@
 .listContainer {
     margin-top: 20px;
+    padding: 16px;
+    transition: all 0.3s ease-in-out;
+}
+
+.technicalContainer {
+    margin-top: 20px;
+    padding: 16px;
+    transition: all 0.3s ease-in-out;
+    background-color: #f8f9ff;
+}
+
+.analysisContainer {
     margin-bottom: 20px;
-    padding: 24px;
-    border-radius: 8px;
-    max-width: 600px;
-    margin: 0 auto;
+}
+
+.listContainer:hover,
+.technicalContainer:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.analysisCard {
+    height: 100%;
+    transition: all 0.2s ease-in-out;
+}
+
+.analysisCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 600px) {
+    .listContainer,
+    .technicalContainer {
+        padding: 12px;
+    }
 } 

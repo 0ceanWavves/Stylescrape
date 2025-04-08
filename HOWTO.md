@@ -52,9 +52,67 @@ This document provides quick instructions to get the Website Scraper up and runn
    - **Libraries:** A list of detected libraries and technologies
    - **Cloning Log:** A detailed log of the cloning process
 
+## Command Line Usage
+
+For more control over the scraping process, you can use the command line directly:
+
+### Basic Command Syntax
+
+```bash
+node website-cloner.js --url=WEBSITE_URL [OPTIONS]
+```
+
+### Example: Cloning a Specific Website (joincobalt.com)
+
+```bash
+node website-cloner.js --url=https://joincobalt.com --assets --depth=2
+```
+
+### Common Command Line Options
+
+- `--url=URL`: The website to scrape (required)
+- `--output=PATH`: Custom output directory (default: ./cloned-site)
+- `--depth=NUMBER`: How many link levels to follow (default: 2)
+- `--assets`: Download all assets (CSS, JS, images)
+- `--no-assets`: Skip downloading assets
+- `--extract`: Enable design analysis
+
+### Examples for Different Use Cases
+
+**Scrape a website with custom output location:**
+```bash
+node website-cloner.js --url=https://joincobalt.com --output=./sites/cobalt
+```
+
+**Quick shallow scrape (homepage only):**
+```bash
+node website-cloner.js --url=https://joincobalt.com --depth=0
+```
+
+**Deep scrape with design analysis:**
+```bash
+node website-cloner.js --url=https://joincobalt.com --assets --depth=3 --extract
+```
+
 ## Output Files
 
-The cloned website will be saved to the `cloned-site` directory in the project root folder.
+The cloned website will be saved to the `cloned-site` directory in the project root folder, unless you specify a custom output path.
+
+When you run the command with `--extract`, you'll also get:
+- Design analysis report: `design-elements/design-report.html`
+- Extracted CSS: `design-elements/css/all-styles.css`
+
+## Viewing the Cloned Website
+
+To browse the cloned website locally:
+1. Navigate to the output directory (e.g., `cloned-site`)
+2. Open `index.html` in your browser
+
+For a more advanced setup with a local server:
+```bash
+node serve-site.js --dir=cloned-site --port=8080
+```
+Then visit http://localhost:8080 in your browser.
 
 ## Troubleshooting
 
@@ -68,6 +126,14 @@ The cloned website will be saved to the `cloned-site` directory in the project r
 - **Connection Error:**
   - Make sure both the backend server and frontend GUI are running
   - Check that firewall settings allow connections on ports 3000 and 3001
+
+- **Large Websites:**
+  - For very large websites, use a smaller `--depth` value (1 or 2)
+  - Some websites may have hundreds or thousands of pages
+
+- **Blocked by Website:**
+  - Some websites might block scraping attempts
+  - Look for error messages about "403 Forbidden" in the logs
 
 ## Need More Help?
 

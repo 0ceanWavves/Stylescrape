@@ -143,9 +143,27 @@ exports.handler = async function(event, context) {
       'Cloning completed'
     ];
     
+    // Generate simulated technical analysis
+    const technicalAnalysis = {
+      'Framework': urlLower.includes('react') ? 'React' : 
+                  urlLower.includes('vue') ? 'Vue.js' : 
+                  urlLower.includes('angular') ? 'Angular' : 'None detected',
+      'CSS Frameworks': urlLower.includes('bootstrap') ? 'Bootstrap' : 
+                       urlLower.includes('tailwind') ? 'Tailwind CSS' : 'None detected',
+      'JavaScript Libraries': libraries.join(', ') || 'None detected',
+      'Web Server': Math.random() > 0.5 ? 'Nginx' : 'Apache',
+      'Responsive Design': Math.random() > 0.7 ? 'Yes' : 'Partial',
+      'SSL/TLS': url.startsWith('https') ? 'Enabled (HTTPS)' : 'Not enabled',
+      'Image Formats': 'PNG, JPG, WebP',
+      'Accessibility Score': `${Math.floor(Math.random() * 40) + 60}/100`,
+      'Performance': `${Math.floor(Math.random() * 30) + 70}/100`,
+      'SEO Score': `${Math.floor(Math.random() * 40) + 60}/100`
+    };
+    
     logInfo('Cloning simulation completed successfully', { 
       libraries, 
-      stepCount: steps.length 
+      stepCount: steps.length,
+      technicalAnalysis
     });
     
     // Return successful response
@@ -157,6 +175,7 @@ exports.handler = async function(event, context) {
         message: `Website ${url} cloned successfully (simulation)`,
         libraries: libraries,
         steps: steps,
+        technicalAnalysis: technicalAnalysis,
         debug: {
           functionId: context.awsRequestId || 'local',
           processingTime: `${new Date().getTime() - new Date(event.requestContext?.timeEpoch || Date.now()).getTime()}ms`,

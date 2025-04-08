@@ -4,11 +4,13 @@
 /api/clone  /.netlify/functions/clone  200
 /api/health  /.netlify/functions/health  200
 /api/log-error  /.netlify/functions/log-error  200
+/api/download  /.netlify/functions/download  200
 
 # Direct access to functions (no /api prefix)
 /clone  /.netlify/functions/clone  200
 /health  /.netlify/functions/health  200
 /log-error  /.netlify/functions/log-error  200
+/download  /.netlify/functions/download  200
 
 # SPA fallback
 /*    /index.html   200 

@@ -1,14 +1,56 @@
 .progressContainer {
     margin-top: 20px;
-    margin-bottom: 20px;
-    padding: 24px;
-    border-radius: 8px;
+    padding: 16px;
+    transition: all 0.3s ease-in-out;
+}
+
+.progressContainer:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 .stepsContainer {
-    margin-top: 16px;
     max-height: 300px;
     overflow-y: auto;
+    background-color: #f8f9fa;
     border-radius: 4px;
-    background-color: #f9f9f9;
+    padding: 8px;
+    margin-top: 8px;
+}
+
+.stepsContainer::-webkit-scrollbar {
+    width: 6px;
+}
+
+.stepsContainer::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.stepsContainer::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+    border-radius: 6px;
+}
+
+.statsContainer {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 16px;
+    padding: 8px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.statItem {
+    text-align: center;
+}
+
+.fileIcon {
+    font-size: 1.2rem;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.expandButton {
+    margin-top: 8px;
+    width: 100%;
+    text-transform: none;
 } 
